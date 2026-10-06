@@ -10,10 +10,10 @@
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','-apple-system','"Segoe UI"','sans-serif']}}}}</script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 <style>
-:root{--bg:#0b0f17;--fg:#e2e8f0;--mut:#8b95a9;--ac:#3b82f6;--ac2:#6366f1;--ln:rgba(255,255,255,.1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px);scroll-behavior:smooth}
+:root{--bg:#0b0f17;--fg:#e2e8f0;--mut:#8b95a9;--ac:#3b82f6;--ac2:#6366f1;--ln:rgba(255,255,255,.1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px);scroll-behavior:smooth}
 *,*::before,*::after{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden;margin:0}
+body{background:var(--bg);color:var(--fg);min-height:100vh;min-height:100dvh;overflow-x:hidden;margin:0}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(700px circle at 10% 0,rgba(59,130,246,.16),transparent 60%),radial-gradient(600px circle at 95% 18%,rgba(99,102,241,.13),transparent 60%),radial-gradient(700px circle at 50% 105%,rgba(148,163,184,.09),transparent 60%)}
 :focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
 button,input{font:inherit;color:inherit}button{cursor:pointer}
@@ -92,6 +92,17 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 @keyframes in{from{opacity:0;transform:translateY(8px)}}@keyframes gr{from{height:0}}
 @keyframes sh{to{background-position:-250% 0}}@keyframes bl{50%{opacity:.55}}
 @keyframes pop{40%{transform:scale(1.22);color:#93c5fd}}
+/* responsive */
+.fld{min-width:0}
+.hnav{overflow-x:auto;scrollbar-width:none;white-space:nowrap;max-width:100%}.hnav::-webkit-scrollbar{display:none}
+@media(max-width:640px){
+h2.t{font-size:22px}.glass{border-radius:20px}.win{border-radius:14px}
+.land{padding:22px 16px}#lp{font-size:38px}
+#st{flex-direction:column}#st li{min-width:0}
+.btn{min-height:42px}#tl input{width:22px;height:22px}.ic{padding:8px}
+#cp{padding-top:max(8vh,env(safe-area-inset-top,0px))}
+.bars{height:70px}.w .big{font-size:24px}}
+@media(hover:none),(pointer:coarse){.hk,#cl kbd{display:none}.glass:hover{transform:none;box-shadow:none}.glass:hover::before,.glass:hover::after{opacity:0}.btn:hover{transform:none;filter:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -99,7 +110,7 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 <header class="sticky z-30 border-b border-white/10 bg-[#0b0f17]/70 backdrop-blur-xl" style="top:env(safe-area-inset-top,0px)">
 <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-3">
 <span class="font-extrabold tracking-tight">Hugo López Fernández</span>
-<nav aria-label="Projects" class="flex flex-wrap gap-5 text-sm font-medium text-slate-400"><a class="hover:text-white" href="#nexus">NEXUS B2B</a><a class="hover:text-white" href="#tasks">Task Manager</a><a class="hover:text-white" href="#lumen">Lumen</a><a class="hover:text-white" href="#memory">Memory Game</a></nav></div></header>
+<nav aria-label="Projects" class="hnav flex gap-5 text-sm font-medium text-slate-400"><a class="hover:text-white" href="#nexus">NEXUS B2B</a><a class="hover:text-white" href="#tasks">Task Manager</a><a class="hover:text-white" href="#lumen">Lumen</a><a class="hover:text-white" href="#memory">Memory Game</a></nav></div></header>
 
 <main class="mx-auto max-w-5xl px-5">
 <section class="pb-10 pt-16 sm:pt-24">
@@ -112,7 +123,7 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 
 <div class="grid gap-8 pb-16">
 
-<section id="nexus" class="glass p-6 sm:p-8">
+<section id="nexus" class="glass p-5 sm:p-8">
 <div class="ico"><i data-lucide="network"></i></div>
 <h2 class="t">NEXUS B2B — Smart Workflow & Analytics Hub</h2>
 <p class="mt-2 max-w-2xl text-slate-400">A concept workspace for data orchestration. Try the three UX patterns below: an adaptive grid, a Command K bar and a contextual flow stepper.</p>
@@ -120,13 +131,13 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 <div class="win mt-6 p-4 sm:p-5" id="nx">
 <div class="mb-4 flex flex-wrap items-center gap-2">
 <div class="flex flex-wrap gap-2" role="group" aria-label="Role view"><button class="btn g" data-r="exec">Executive Summary</button><button class="btn g" data-r="analytics">Deep Analytics</button><button class="btn g" data-r="ops">Operations</button></div>
-<span class="flex-1"></span><button class="btn g" id="ck"><i data-lucide="command"></i>Quick actions <kbd>Ctrl K</kbd></button></div>
+<span class="flex-1"></span><button class="btn g" id="ck"><i data-lucide="command"></i>Quick actions <kbd class="hk">Ctrl K</kbd></button></div>
 <div id="ng"></div>
 <div class="mt-5"><div class="mb-2 text-sm font-semibold">Onboarding flow</div>
 <ol id="st"></ol><div class="pbar"><i id="pb"></i></div>
 <p class="m-0 text-sm text-slate-300" id="sh"></p><p class="mt-1 text-xs text-slate-500" id="sx"></p>
 <div class="mt-3 flex flex-wrap items-center gap-3"><button class="btn" id="nb"></button><span class="text-sm text-emerald-300" id="fb" role="status"></span></div>
-<p class="mt-3 text-xs text-slate-500">Tip: hover the workspace and press E, A, O (views) or N (next step).</p></div>
+<p class="hk mt-3 text-xs text-slate-500">Tip: hover the workspace and press E, A, O (views) or N (next step).</p></div>
 </div>
 <div class="mt-6 grid gap-5 sm:grid-cols-3">
 <div><h3 class="mb-1 text-sm font-semibold text-slate-200">UX & Technical Case Study: Problem</h3><p class="m-0 text-sm text-slate-400">B2B teams share one dataset but need different answers. Executives want signals, analysts want depth, operators want queues. One static dashboard fails all three.</p></div>
@@ -136,11 +147,11 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 <div class="bdh" data-k="nexus"></div>
 </section>
 
-<section id="tasks" class="glass grid items-start gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
+<section id="tasks" class="glass grid items-start gap-8 p-5 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
 <div><div class="ico"><i data-lucide="list-checks"></i></div><h2 class="t">Task Manager</h2>
 <p class="mt-2 text-slate-400">Add, complete, filter and delete tasks. Everything is saved in the browser and survives a reload.</p>
 <ul class="mt-4 flex flex-wrap gap-2"><li class="badge">Semantic HTML</li><li class="badge">Flexbox & Grid</li><li class="badge">DOM</li><li class="badge">localStorage</li></ul></div>
-<div class="win p-5">
+<div class="win p-4 sm:p-5">
 <form id="tf" class="flex gap-2"><input class="fld" type="text" id="ti" placeholder="Write a task and press Enter" aria-label="New task" maxlength="120" autocomplete="off"><button class="btn shrink-0"><i data-lucide="plus"></i>Add</button></form>
 <ul id="tl"></ul>
 <div class="flex flex-wrap items-center gap-2"><button class="btn g" data-f="all" aria-pressed="true">All</button><button class="btn g" data-f="todo" aria-pressed="false">Active</button><button class="btn g" data-f="done" aria-pressed="false">Done</button><span class="flex-1 text-sm text-slate-400" id="tc" aria-live="polite"></span><button class="btn g" id="tx"><i data-lucide="trash-2"></i>Clear done</button></div>
@@ -148,7 +159,7 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 <div class="bdh lg:col-span-2" data-k="tasks"></div>
 </section>
 
-<section id="lumen" class="glass grid items-start gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
+<section id="lumen" class="glass grid items-start gap-8 p-5 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
 <div><div class="ico"><i data-lucide="layout-template"></i></div><h2 class="t">Landing Page (Lumen)</h2>
 <p class="mt-2 text-slate-400">A product page for a fictional focus app, with an animated pricing switch, FAQ and a validated sign-up form.</p>
 <ul class="mt-4 flex flex-wrap gap-2"><li class="badge">Responsive</li><li class="badge">CSS gradients</li><li class="badge">Micro-interactions</li><li class="badge">Form validation</li></ul></div>
@@ -167,11 +178,11 @@ h2.t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 <div class="bdh lg:col-span-2" data-k="lumen"></div>
 </section>
 
-<section id="memory" class="glass grid items-start gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
+<section id="memory" class="glass grid items-start gap-8 p-5 sm:p-8 lg:grid-cols-[1fr_1.35fr]">
 <div><div class="ico"><i data-lucide="gamepad-2"></i></div><h2 class="t">Memory Game</h2>
 <p class="mt-2 text-slate-400">Find all eight pairs in as few moves as possible. It tracks moves and time, and restarts whenever you want.</p>
 <ul class="mt-4 flex flex-wrap gap-2"><li class="badge">Game logic</li><li class="badge">Events & timers</li><li class="badge">CSS transitions</li><li class="badge">Keyboard accessible</li></ul></div>
-<div class="win p-5">
+<div class="win p-4 sm:p-5">
 <div class="flex flex-wrap items-center gap-4 text-sm"><span>Moves: <b id="mm">0</b></span><span>Time: <b id="mt">0s</b></span><span class="flex-1"></span><button class="btn g" id="mr"><i data-lucide="rotate-ccw"></i>Restart</button></div>
 <div id="mg"></div><p id="mw" role="status" class="mt-3 min-h-[24px] font-semibold text-emerald-300"></p></div>
 <div class="bdh lg:col-span-2" data-k="memory"></div>
