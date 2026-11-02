@@ -11,7 +11,7 @@ const KEY='orbit.demo.v1';
 const PD={'7D':7,'30D':30,'90D':90,'1Y':365};
 const EXP=['housing','food','transport','shopping','lifestyle','health'];
 const CATS={housing:{n:'Housing',c:'#C7F36B',i:'M3 11l9-8 9 8v9H3z'},food:{n:'Food & Drinks',c:'#E8B04B',i:'M6 3v8M10 3v8M8 11v10M17 3c-2 2-2 6 0 8v10'},transport:{n:'Transport',c:'#6FB7E9',i:'M4 15l2-7h12l2 7zM7 18v2M17 18v2'},shopping:{n:'Shopping',c:'#D98CE0',i:'M5 8h14l-1 12H6zM9 8a3 3 0 016 0'},lifestyle:{n:'Lifestyle',c:'#7FE0B5',i:'M12 21s-8-5-8-11a4 4 0 018-1 4 4 0 018 1c0 6-8 11-8 11z'},health:{n:'Health',c:'#F08A7E',i:'M12 5v14M5 12h14'},income:{n:'Income',c:'#C7F36B',i:'M12 19V5M6 11l6-6 6 6'},transfer:{n:'Transfer',c:'#9AA39A',i:'M4 8h14l-3-3M20 16H6l3 3'}};
-const NAV=[['overview','Overview','M3 11l9-8 9 8v9H3z'],['activity','Activity','M4 6h16M4 12h16M4 18h10'],['insights','Insights','M4 20V10M10 20V4M16 20v-7M22 20H2'],['goals','Goals','M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z'],['wallet','Wallet','M3 7h18v12H3zM3 7l3-3h12l3 3M16 13h2'],['lab','What If Lab','M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3'],['settings','Settings','M4 8h10M18 8h2M4 16h2M10 16h10']];
+const NAV=[['overview','Overview','M3 11l9-8 9 8v9H3z'],['activity','Activity','M4 6h16M4 12h16M4 18h10'],['insights','Insights','M4 20V10M10 20V4M16 20v-7M22 20H2'],['goals','Goals','M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z'],['wallet','Wallet','M3 7h18v12H3zM3 7l3-3h12l3 3M16 13h2'],['settings','Settings','M4 8h10M18 8h2M4 16h2M10 16h10']];
 const ico=(d,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 
 /* 2. SEED DATA (amounts in euros here, stored as integer cents) */
@@ -20,7 +20,7 @@ function seed(){
   return{acc:[{id:'a1',name:'Main account',open:120000},{id:'a2',name:'Savings pocket',open:400000}],
     tx:R.map(([d,name,cat,type,e,acc])=>({id:uid(),name,cat,type,amt:Math.round(e*100),date:addD(TODAY,-d),acc,to:type==='transfer'?'a2':'',desc:''})),
     goals:[{id:uid(),name:'Surf Trip',target:90000,saved:41000,deadline:addD(TODAY,120),color:'#6FB7E9'},{id:uid(),name:'Emergency Fund',target:600000,saved:215000,deadline:'',color:'#C7F36B'},{id:uid(),name:'New MacBook',target:180000,saved:180000,deadline:addD(TODAY,30),color:'#E8B04B'}],
-    cards:[{id:'c1',name:'ORBIT Black',last:'4821',acc:'a1',frozen:false,active:true,kind:'v1'},{id:'c2',name:'ORBIT Core',last:'1037',acc:'a1',frozen:false,active:true,kind:'v2'},{id:'c3',name:'ORBIT Virtual',last:'7764',acc:'a2',frozen:false,active:true,kind:'v3'}],
+    cards:[{id:'c1',name:'ORBIT Prime',last:'4821',acc:'a1',frozen:false,active:true,kind:'v1'},{id:'c2',name:'ORBIT Core',last:'1037',acc:'a1',frozen:false,active:true,kind:'v2'},{id:'c3',name:'ORBIT Virtual',last:'7764',acc:'a2',frozen:false,active:true,kind:'v3'}],
     scn:[],prefs:{hide:false,cur:'EUR',calm:false}};
 }
 
@@ -35,6 +35,7 @@ function load(){
   S.tx=S.tx.filter(t=>t&&Number.isInteger(t.amt)&&t.amt>0&&/^\d{4}-\d\d-\d\d$/.test(t.date)&&CATS[t.cat]&&S.acc.some(a=>a.id===t.acc));
   S.goals=S.goals.filter(g=>g&&g.target>0&&Number.isFinite(g.saved));
   S.prefs={hide:false,cur:'EUR',calm:false,...S.prefs};
+  S.cards.forEach(c=>{if(c.name==='ORBIT Black')c.name='ORBIT Prime'});
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
@@ -51,7 +52,6 @@ const accBal=id=>S.acc.find(a=>a.id===id).open+S.tx.reduce((s,t)=>s+(t.acc===id?
 function series(p){const[a,b]=rng(p),o=[];for(let d=a;d<=b;d=addD(d,1))o.push({l:fdate(d),y:balAt(d)});return o}
 const gpct=g=>g.target>0?Math.min(1,g.saved/g.target):0;
 const gstat=g=>g.saved>=g.target?'Completed':g.deadline&&g.deadline<TODAY?'Past deadline':'In progress';
-function labBase(){const s=stats('90D'),b=s.by;return{inc:Math.round(s.inc/3),ess:Math.round(((b.housing||0)+(b.health||0)+(b.transport||0))/3),vari:Math.round(((b.food||0)+(b.shopping||0)+(b.lifestyle||0))/3)}}
 
 /* 6. FORMAT */
 const loc=()=>S.prefs.cur==='USD'?'en-US':'es-ES';
@@ -89,9 +89,10 @@ function catList(by){
 /* 8. VIEWS */
 const per=()=>`<div class="pills" role="group" aria-label="Period">${Object.keys(PD).map(p=>`<button data-act="per" data-p="${p}" aria-pressed="${p===UI.p}">${p}</button>`).join('')}</div>`;
 const netLogo=n=>n==='visa'?`<svg viewBox="0 0 60 22" width="52" role="img" aria-label="Visa"><text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" font-style="italic" fill="#F4F5F1" letter-spacing="-1">VISA</text></svg>`:`<svg viewBox="0 0 48 30" width="44" role="img" aria-label="Mastercard"><circle cx="17" cy="15" r="13" fill="#EB001B"/><circle cx="31" cy="15" r="13" fill="#F79E1B"/><path d="M24 4.6a13 13 0 010 20.8 13 13 0 010-20.8z" fill="#FF5F00"/></svg>`;
+const TIER={v1:'Prime',v2:'Core',v3:'Virtual',v4:'Gold'};
 const cnet=k=>k.net||(k.kind==='v2'?'visa':'mc');
 const cvv=k=>/^\d{4}$/.test(k.last)?String(+k.last*7%900+100):'•••';
-const card=k=>`<div class="cwrap"><div class="flip" data-act="flip" role="button" tabindex="0" aria-pressed="false" aria-label="${esc(k.name)} card, press to flip"><div class="fi"><div class="vcard face ${k.kind}${k.frozen||!k.active?' off':''}"><div class="cr"><b>ORBIT</b><small class="st">${k.frozen?'Frozen':k.active?'Active':'Inactive'} · demo</small></div><span class="chip"></span><div><p class="cn">•••• •••• •••• <span class="pv-l">${k.last}</span></p><div class="cr"><span class="pv-h">${esc(k.holder||'Alex Rivera')}</span><span class="net">${netLogo(cnet(k))}</span></div></div><span class="glare"></span></div><div class="vcard face back ${k.kind}${k.frozen||!k.active?' off':''}"><div class="strip"></div><div class="sig"><small>Security code</small><b>${cvv(k)}</b></div><p class="fine"><span class="pv-nm">${esc(k.name)}</span> · expires <span class="pv-e">${esc(k.exp||'08/29')}</span><br>Fictional demo card. It cannot make payments.</p><span class="glare"></span></div></div></div></div>`;
+const card=k=>`<div class="cwrap"><div class="flip" data-act="flip" role="button" tabindex="0" aria-pressed="false" aria-label="${esc(k.name)} card, press to flip"><div class="fi"><div class="vcard face ${k.kind}${k.frozen||!k.active?' off':''}"><div class="cr"><b>ORBIT <i class="tier">${TIER[k.kind]||''}</i></b><small class="st">${k.frozen?'Frozen':k.active?'Active':'Inactive'} · demo</small></div><span class="chip"></span><div><p class="cn">•••• •••• •••• <span class="pv-l">${k.last}</span></p><div class="cr"><span class="pv-h">${esc(k.holder||'Alex Rivera')}</span><span class="net">${netLogo(cnet(k))}</span></div></div><span class="glare"></span></div><div class="vcard face back ${k.kind}${k.frozen||!k.active?' off':''}"><div class="strip"></div><div class="sig"><small>Security code</small><b>${cvv(k)}</b></div><p class="fine"><span class="pv-nm">${esc(k.name)}</span> · expires <span class="pv-e">${esc(k.exp||'08/29')}</span><br>Fictional demo card. It cannot make payments.</p><span class="glare"></span></div></div></div></div>`;
 const row=t=>{const c=CATS[t.cat],s=t.type==='income'?'+':t.type==='expense'?'−':'⇄ ';return `<button class="tx" data-act="tx" data-id="${t.id}"><span class="ci" style="--c:${c.c}">${ico(c.i)}</span><span class="tn"><b>${esc(t.name)}</b><small>${c.n} · ${fdate(t.date)}</small></span><span class="amt ${t.type}">${s}${fmt(t.amt)}</span></button>`};
 const recent=n=>[...S.tx].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,n);
 
@@ -100,7 +101,7 @@ function ovParts(){
   k=all?S.cards[0]:(S.cards.find(x=>x.acc===sc)||S.cards[0]),
   kp=(l,v,d,inv)=>`<div class="kpi"><small>${l}</small><b data-c="${v}">${fmt(v)}</b>${d==null?'<em class="mu">No prior data</em>':`<em class="${(inv?-d:d)>=0?'up':'dn'}">${fp(d)} vs previous ${UI.p}</em>`}</div>`;
   return{
-    head:`<p class="mu">${new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}</p><h2>Good ${h<12?'morning':h<19?'afternoon':'evening'}, Alex. Here is where your money stands.</h2><div class="big" data-c="${bal}" aria-label="Balance">${fmt(bal)}</div><p class="mu sub">${all?'Total across '+S.acc.length+' demo accounts':esc(a.name)} <button class="ghost" data-act="hide" style="margin-left:8px">${S.prefs.hide?'Show':'Hide'} amounts</button></p>`,
+    head:`<p class="mu">${new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}</p><h2>Good ${h<12?'morning':h<19?'afternoon':'evening'}, Alex. Here is where your money stands.</h2><div class="big" data-c="${bal}" aria-label="Balance">${fmt(bal)}</div><p class="mu sub">${all?'Total across '+S.acc.length+' demo accounts':esc(a.name)}</p>`,
     card:card(k),
     kpis:kp(all?'Total balance':'Balance',bal,delta(bal,pb))+kp(all?'Income':'Money in',c.inc,delta(c.inc,q.inc))+kp(all?'Expenses':'Money out',c.exp,delta(c.exp,q.exp),1)+kp(all?'Net savings':'Net change',c.net,delta(c.net,q.net)),
     chart:line('ov',seriesS(UI.p,sc)),
@@ -113,8 +114,7 @@ function vOverview(){
   <div class="kpis" id="ovK">${P.kpis}</div>
   <div class="panel"><header><h3>Balance over the last ${UI.p}</h3></header><div id="ovChart">${P.chart}</div></div>
   <div class="grid"><div class="panel"><header><h3>Where it went</h3></header><div id="ovCats">${P.cats}</div></div>
-  <div class="panel"><header><h3>Recent transactions</h3><button class="ghost" data-act="goto" data-v="activity">See all</button></header><div id="ovRecent">${P.recent}</div></div></div>
-  <div class="mini" style="margin-top:18px"><button class="btn" data-act="addtx">Add transaction</button><button class="ghost" data-act="addgoal">Create goal</button><button class="ghost" data-act="goto" data-v="insights">Explore insights</button></div>`}
+  <div class="panel"><header><h3>Recent transactions</h3><button class="ghost" data-act="goto" data-v="activity">See all</button></header><div id="ovRecent">${P.recent}</div></div></div>`}
 
 const o=(a,v)=>a.map(([k,n])=>`<option value="${k}"${v===k?' selected':''}>${n}</option>`).join('');
 function vActivity(){
@@ -149,7 +149,7 @@ function vInsights(){
   else ob.push(['ne','Add more activity to unlock insights']);
   const pc=c.inc?Math.round(c.rate*100)+'%':'—';
   return `<div class="ctr">${per()}</div>
-  <section class="gauge"><svg viewBox="0 0 180 180" role="img" aria-label="Saving rate ${pc}"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C7F36B"/><stop offset="1" stop-color="#7FE0B5"/></linearGradient></defs><circle cx="90" cy="90" r="${R}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="12"/><circle class="gv" cx="90" cy="90" r="${R}" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C*rate} ${C}" transform="rotate(-90 90 90)"/><text x="90" y="90" text-anchor="middle" class="gp">${pc}</text><text x="90" y="114" text-anchor="middle" class="gl">saved</text></svg>
+  <section class="gauge"><svg viewBox="0 0 180 180" role="img" aria-label="Saving rate ${pc}"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C7F36B"/><stop offset="1" stop-color="#7FE0B5"/></linearGradient></defs><circle cx="90" cy="90" r="${R}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="14"/><circle class="gv" cx="90" cy="90" r="${R}" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${C*rate} ${C}" transform="rotate(-90 90 90)"/><text x="90" y="90" text-anchor="middle" class="gp">${pc}</text><text x="90" y="114" text-anchor="middle" class="gl">saved</text></svg>
   <h2>${c.inc?'You kept '+fmt(c.net):'No income yet'}</h2><p class="mu">${c.inc?'of '+fmt(c.inc)+' earned · last '+UI.p:'last '+UI.p}</p></section>
   <div class="obs">${ob.slice(0,3).map(([t,x])=>`<span class="ob" data-t="${t}">${esc(x)}</span>`).join('')}</div>
   <div class="tiles">
@@ -173,31 +173,16 @@ function vWallet(){
   <div class="panel"><header><h3>Latest movements · ${esc(a.name)}</h3></header>${l.length?l.map(row).join(''):empty('No movements on this account yet.')}</div></div>
   <p class="note">Cards and accounts are fictional demo data. ORBIT cannot make payments or connect to banks.</p>`}
 
-function labOut(){
-  const L=UI.lab,B=UI.base,cf=L.inc-L.ess-L.vari,bcf=B.inc-B.ess-B.vari,bal=balAt(TODAY),pb=bal+cf*L.h,bb=bal+bcf*L.h,sv=Math.max(0,Math.min(L.sav,cf))*L.h,d=cf-bcf;
-  const pts=[...Array(L.h+1)].map((_,i)=>({l:'Month '+i,y:bal+cf*i}));
-  return `<div class="res"><div><small>Monthly cash flow</small><b>${fmt(cf)}</b></div><div><small>Projected balance (${L.h} mo)</small><b>${fmt(pb)}</b></div><div><small>Projected savings</small><b>${fmt(sv)}</b></div><div><small>Saving rate</small><b>${L.inc>0?Math.round(cf/L.inc*100)+'%':'—'}</b></div></div>
-  ${line('lab',pts)}<p class="note">${d===0?'Same monthly cash flow as your base scenario.':`${fmt(Math.abs(d))} ${d>0?'more':'less'} per month than your base scenario, ${fmt(Math.abs(pb-bb))} ${pb>=bb?'higher':'lower'} balance after ${L.h} months.`} ${cf<L.sav?`Your cash flow is below the ${fmt(L.sav)} you want to save, so projected savings are limited to what is left over.`:''} These are simple estimates from the figures above, not guaranteed predictions.</p>`}
-function vLab(){
-  UI.base=labBase();const B=UI.base;
-  if(!UI.lab)UI.lab={...B,sav:Math.max(0,B.inc-B.ess-B.vari),h:6};
-  const L=UI.lab,mx=Math.max(8000,Math.ceil(B.inc/100*1.6)),ctl=(k,t)=>`<label for="n-${k}">${t}</label><input type="range" data-lab="${k}" min="0" max="${mx}" step="10" value="${Math.round(L[k]/100)}" aria-label="${t} slider"><input id="n-${k}" type="number" data-lab="${k}" min="0" step="10" value="${Math.round(L[k]/100)}">`;
-  return `<div class="lab"><div class="panel"><header><h3>Adjust the numbers (per month, in ${S.prefs.cur})</h3></header><div class="ctl">${ctl('inc','Income')}${ctl('ess','Essential spending')}${ctl('vari','Variable spending')}${ctl('sav','Savings you want')}</div>
-  <div class="pills" role="group" aria-label="Horizon">${[3,6,12].map(h=>`<button data-act="hor" data-h="${h}" aria-pressed="${L.h===h}">${h} mo</button>`).join('')}</div>
-  <div class="mini"><button class="btn" data-act="savescn">Save scenario</button><button class="ghost" data-act="resetlab">Reset to base</button></div>
-  <p class="note">Base = your average of the last 90 days. Essentials: housing, health, transport.</p></div><div class="panel" id="labOut">${labOut()}</div></div>
-  <div class="panel" style="margin-top:18px"><header><h3>Saved scenarios</h3></header>${S.scn.length?`<table><tr><th>Name</th><th>Cash flow/mo</th><th>vs base</th><th></th></tr>${S.scn.map(s=>{const cf=s.inc-s.ess-s.vari,d=cf-(B.inc-B.ess-B.vari);return `<tr><td>${esc(s.name)} <small>${s.h} mo</small></td><td>${fmt(cf)}</td><td>${d>=0?'+':'−'}${fmt(Math.abs(d))}</td><td><button class="ghost" data-act="delscn" data-id="${s.id}">Delete</button></td></tr>`}).join('')}</table>`:empty('Save a scenario to compare it with your base.')}</div>`}
-
 function vSettings(){
   const sz=(new Blob([JSON.stringify(S)]).size/1024).toFixed(1),P=S.prefs;
   return `<div class="panel"><div class="row"><label for="p-hide">Hide amounts</label><input id="p-hide" type="checkbox" data-pref="hide" ${P.hide?'checked':''}></div>
   <div class="row"><span>Currency and number format</span><div class="seg" style="--n:2;--p:${P.cur==='USD'?1:0};min-width:220px"><i class="thumb"></i><button data-act="cur" data-v="EUR" aria-pressed="${P.cur==='EUR'}">EUR · 1.234,56</button><button data-act="cur" data-v="USD" aria-pressed="${P.cur==='USD'}">USD · 1,234.56</button></div></div>
   <div class="row"><label for="p-calm">Reduce motion</label><input id="p-calm" type="checkbox" data-pref="calm" ${P.calm?'checked':''}></div>
   <p class="note">Changing currency only changes the symbol and format. Amounts are not converted.</p></div>
-  <div class="panel"><header><h3>Local storage</h3></header><p>${S.tx.length} transactions · ${S.goals.length} goals · ${S.scn.length} scenarios · ${sz} KB</p>
+  <div class="panel"><header><h3>Local storage</h3></header><p>${S.tx.length} transactions · ${S.goals.length} goals · ${sz} KB</p>
   <p class="note">ORBIT is a portfolio demo with fictional data. Your changes are saved in this browser's local storage only. Nothing is sent anywhere, and nothing here is encrypted.</p>
   <div class="mini" style="margin-top:12px"><button class="ghost" data-act="restore">Restore demo data</button></div></div>`}
-const V={overview:vOverview,activity:vActivity,insights:vInsights,goals:vGoals,wallet:vWallet,lab:vLab,settings:vSettings};
+const V={overview:vOverview,activity:vActivity,insights:vInsights,goals:vGoals,wallet:vWallet,settings:vSettings};
 function render(){
   if(!V[UI.v])UI.v='overview';
   const n=NAV.find(x=>x[0]===UI.v),vw=$('#view');
@@ -269,8 +254,6 @@ function submitContrib(f){
   const a=toC(new FormData(f).get('amount'));if(showErr(f,a==null?{amount:'Enter an amount above 0.'}:{}))return;
   const g=S.goals.find(x=>x.id===f.dataset.id),was=g.saved>=g.target;g.saved+=a;
   commit(!was&&g.saved>=g.target?`${g.name} reached. Well done.`:'Contribution added')}
-function scnForm(){openDlg('Save scenario',`<form data-form="scn" novalidate>${fld('Scenario name','name','','maxlength="40"')}<div class="fa"><button type="button" class="ghost" data-act="x">Cancel</button><button class="btn">Save scenario</button></div></form>`)}
-function submitScn(f){const n=new FormData(f).get('name').trim();if(showErr(f,n?{}:{name:'Give the scenario a name.'}))return;S.scn.push({id:uid(),name:n,...UI.lab});commit('Scenario saved')}
 
 /* 12. EVENTS */
 function act(a,d,b){switch(a){
@@ -300,19 +283,15 @@ function act(a,d,b){switch(a){
   case 'card':UI.card=+d.i;render();break;
   case 'freeze':{const k=S.cards[UI.card];k.frozen=!k.frozen;save();render();toast(k.frozen?'Card frozen':'Card unfrozen');break}
   case 'activate':{const k=S.cards[UI.card];k.active=!k.active;save();render();toast(k.active?'Virtual card activated':'Virtual card deactivated');break}
-  case 'hor':UI.lab.h=+d.h;render();break;
-  case 'resetlab':UI.lab=null;render();break;
-  case 'savescn':scnForm();break;
-  case 'delscn':S.scn=S.scn.filter(s=>s.id!==d.id);save();render();toast('Scenario deleted');break;
   case 'restore':confirmDlg('Restore demo data?','Transactions, goals, cards and scenarios will be replaced by the original fictional data. Your display preferences are kept.',()=>{const p=S.prefs;S=seed();S.prefs=p;UI.lab=null;UI.f={...DEF};save();render();toast('Demo data restored')},'Restore');break;
 }}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b)act(b.dataset.act,b.dataset,b);else if(e.target===dlg)closeDlg()});
-document.addEventListener('submit',e=>{e.preventDefault();const f=e.target,m={tx:submitTx,goal:submitGoal,contrib:submitContrib,scn:submitScn,card:submitCard}[f.dataset.form];m&&m(f)});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target,m={tx:submitTx,goal:submitGoal,contrib:submitContrib,card:submitCard}[f.dataset.form];m&&m(f)});
 document.addEventListener('input',e=>{const t=e.target;
   if(t.id==='q'){UI.f.q=t.value;updList()}
   else if(t.form&&t.form.classList.contains('nf')&&t.name==='amount')syncTx(t.form);
   else if(t.form&&t.form.dataset.form==='card')cardInput(t);
-  else if(t.dataset.lab){const v=Math.max(0,Math.min(1e7,parseFloat(String(t.value).replace(',','.'))||0));UI.lab[t.dataset.lab]=Math.round(v*100);document.querySelectorAll(`[data-lab="${t.dataset.lab}"]`).forEach(x=>{if(x!==t)x.value=v});$('#labOut').innerHTML=labOut()}});
+});
 document.addEventListener('change',e=>{const t=e.target;
   if(t.id==='dpick'){t.form.elements.date.value=t.value||TODAY;syncTx(t.form)}
   else if(t.dataset.f){UI.f[t.dataset.f]=t.value;updList()}
@@ -330,7 +309,7 @@ function hover(e){
 /* v2: motion helpers */
 const calm=()=>S.prefs.calm||matchMedia('(prefers-reduced-motion:reduce)').matches;
 function nav(){const n=$('#nav');if(!n.children.length)n.innerHTML=NAV.map((x,i)=>`<a href="#${x[0]}" style="--i:${i}">${ico(x[2])}<span>${x[1]}</span></a>`).join('');n.querySelectorAll('a').forEach((a,i)=>{if(NAV[i][0]===UI.v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')})}
-function stagger(root,sel='.hero>*,.pills,.kpi,.panel,.tx,.dg,.cats li,.row,.chips button,.goals>.panel,.empty,.bar>*,#cnt,.mini>*,.res>div,.ob,.gauge>*,.ovbar>*'){let i=0;root.querySelectorAll(sel).forEach(el=>{el.style.setProperty('--i',Math.min(i++,22));el.classList.add('rv')})}
+function stagger(root,sel='.hero>*,.pills,.kpi,.panel,.tx,.dg,.cats li,.row,.chips button,.goals>.panel,.empty,.bar>*,#cnt,.mini>*,.res>div,.ob,.gauge>h2,.gauge>p,.ovbar>*'){let i=0;root.querySelectorAll(sel).forEach(el=>{el.style.setProperty('--i',Math.min(i++,22));el.classList.add('rv')})}
 function countUp(){if(calm()||S.prefs.hide)return;document.querySelectorAll('[data-c]').forEach(el=>{const to=+el.dataset.c,t0=performance.now();const step=n=>{if(!el.isConnected)return;const k=Math.min(1,(n-t0)/1000);el.textContent=fmt(Math.round(to*(1-Math.pow(1-k,4))));if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
 function syncTx(f){
   const v=k=>f.elements[k].value,ty=v('type'),A=n=>S.acc.find(a=>a.id===n),mark=(sel,fn)=>f.querySelectorAll(sel).forEach(b=>b.setAttribute('aria-pressed',fn(b)));
@@ -370,7 +349,7 @@ function ovSwap(){
   set('#ovHead',P.head);set('#ovCard',P.card);set('#ovK',P.kpis,'.kpi');set('#ovChart',P.chart);set('#ovCats',P.cats,'.cats li');set('#ovRecent',P.recent,'.tx,.empty');countUp();
   const sg=$('.scope');sg.style.setProperty('--p',idx);sg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===UI.sc))}
 function cardForm(){
-  const kinds=[['v1','Black','#C7F36B'],['v2','Core','#E8B04B'],['v3','Virtual','#6FB7E9']];
+  const kinds=[['v1','Prime','#C7F36B'],['v2','Core','#E8B04B'],['v3','Virtual','#6FB7E9'],['v4','Gold','#E6C27A']];
   openDlg('Add card',`<form class="nf" data-form="card" data-type="card" novalidate>
   <div id="cprev">${card({name:'New card',last:'••••',kind:'v1',net:'mc',frozen:false,active:true,holder:'Alex Rivera',exp:'MM/YY'})}</div>
   <input type="hidden" name="net" value="mc"><input type="hidden" name="acc" value="a1"><input type="hidden" name="kind" value="v1">
@@ -390,7 +369,8 @@ function cardInput(t){
   syncCard(f)}
 function syncCard(f){
   const v=k=>f.elements[k].value,d=v('number').replace(/\D/g,''),pv=$('#cprev',f),mark=(s,fn)=>f.querySelectorAll(s).forEach(b=>b.setAttribute('aria-pressed',fn(b)));
-  pv.querySelectorAll('.vcard').forEach(c=>{c.classList.remove('v1','v2','v3');c.classList.add(v('kind'))});
+  pv.querySelectorAll('.vcard').forEach(c=>{c.classList.remove('v1','v2','v3','v4');c.classList.add(v('kind'))});
+  $('.tier',pv).textContent=TIER[v('kind')];
   $('.pv-l',pv).textContent=d.length>=4?d.slice(-4):'••••';
   $('.pv-h',pv).textContent=v('holder').trim()||'Your name';
   $('.pv-e',pv).textContent=v('exp')||'MM/YY';
@@ -407,13 +387,14 @@ function submitCard(f){
   if(!/^\d\d\/\d\d$/.test(d.exp)||m<1||m>12)er.exp='Use the format MM/YY.';
   else if(y<now.getFullYear()||(y===now.getFullYear()&&m<now.getMonth()+1))er.exp='This card has expired.';
   if(showErr(f,er))return;
-  S.cards.push({id:uid(),name:d.nm.trim()||'ORBIT '+({v1:'Black',v2:'Core',v3:'Virtual'}[d.kind]),last:n.slice(-4),acc:d.acc,frozen:false,active:true,kind:d.kind,net:d.net,holder:d.holder.trim(),exp:d.exp,custom:true});
+  S.cards.push({id:uid(),name:d.nm.trim()||'ORBIT '+TIER[d.kind],last:n.slice(-4),acc:d.acc,frozen:false,active:true,kind:d.kind,net:d.net,holder:d.holder.trim(),exp:d.exp,custom:true});
   UI.card=S.cards.length-1;commit('Card added to your wallet')}
 
 /* 13. INIT (with intro curtain) */
+$('.logo').addEventListener('click',e=>{e.preventDefault();closeDlg();if(UI.v==='overview'){UI.sc='all';render();window.scrollTo({top:0,behavior:'smooth'})}else location.hash='overview'});
 load();
 document.documentElement.classList.toggle('calm',!!S.prefs.calm);
 UI.v=location.hash.slice(1)||'overview';
 const iv=$('#intro');
 if(!iv||calm()){if(iv)iv.remove();render()}
-else{let o=0;const open=()=>{if(o)return;o=1;iv.classList.add('open');render();setTimeout(()=>iv.remove(),1200)};iv.addEventListener('click',open);setTimeout(open,2400)}
+else{let o=0;const open=()=>{if(o)return;o=1;iv.classList.add('open');document.body.classList.add('enter');render();setTimeout(()=>{iv.remove();document.body.classList.remove('enter')},1500)};iv.addEventListener('click',open);setTimeout(open,2400)}
